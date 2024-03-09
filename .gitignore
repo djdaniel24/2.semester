@@ -1,6 +1,17 @@
 # Um die Angeben nicht hochzuladen
 *.pdf
 
+# GIMP Projects
+*.xcf
+*.xcf.*
+
+# Archives
+*.zip
+*.tar
+*.tar.*
+
+###
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
