@@ -1,7 +1,5 @@
 # Aufgabenblatt 1
 
-Testing commit
-
 ## Allgemeine Anmerkungen
 
 Ihre Lösung für dieses Aufgabenblatt ist bis Montag, 18.3.2024 11:00 Uhr durch `git commit`
