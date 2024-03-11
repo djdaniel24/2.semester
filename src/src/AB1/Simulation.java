@@ -45,17 +45,15 @@ public class Simulation {
         Random random = new Random(2024);
 
         for (int i = 0; i < bodies.length; i++) {
-            bodies[i] = new Body();
-            bodies[i].mass = Math.abs(random.nextGaussian()) * OVERALL_SYSTEM_MASS / bodies.length; // kg
-            bodies[i].massCenter = new Vector3();
-            bodies[i].currentMovement = new Vector3();
-            bodies[i].massCenter.x = 0.2 * random.nextGaussian() * AU;
-            bodies[i].massCenter.y = 0.2 * random.nextGaussian() * AU;
-            bodies[i].massCenter.z = 0.2 * random.nextGaussian() * AU;
+            double mass = Math.abs(random.nextGaussian()) * OVERALL_SYSTEM_MASS / bodies.length; // kg
+            bodies[i] = new Body(mass, new Vector3(), new Vector3());
+            bodies[i].getMassCenter().x = 0.2 * random.nextGaussian() * AU;
+            bodies[i].getMassCenter().y = 0.2 * random.nextGaussian() * AU;
+            bodies[i].getMassCenter().z = 0.2 * random.nextGaussian() * AU;
 
-            bodies[i].currentMovement.x = random.nextGaussian() * 5e3;
-            bodies[i].currentMovement.y = random.nextGaussian() * 5e3;
-            bodies[i].currentMovement.z = random.nextGaussian() * 5e3;
+            bodies[i].getCurrentMovement().x = random.nextGaussian() * 5e3;
+            bodies[i].getCurrentMovement().y = random.nextGaussian() * 5e3;
+            bodies[i].getCurrentMovement().z = random.nextGaussian() * 5e3;
 
         }
 
@@ -68,8 +66,8 @@ public class Simulation {
             // merge bodies that have collided
             for (int i = 0; i < bodies.length; i++) {
                 for (int j = i + 1; j < bodies.length; j++) {
-                    if (distance(bodies[j].massCenter, bodies[i].massCenter) <
-                            SpaceDraw.massToRadius(bodies[j].mass) + SpaceDraw.massToRadius(bodies[i].mass)) {
+                    if (distance(bodies[j].getMassCenter(), bodies[i].getMassCenter()) <
+                            SpaceDraw.massToRadius(bodies[j].getMass()) + SpaceDraw.massToRadius(bodies[i].getMass())) {
                         // collision of bodies i and j
                         bodies[i] = merge(bodies[i], bodies[j]);
 
@@ -137,8 +135,8 @@ public class Simulation {
      */
     public static void draw(CodeDraw cd, Body b) {
 
-        cd.setColor(SpaceDraw.massToColor(b.mass));
-        drawAsFilledCircle(cd, b.massCenter, SpaceDraw.massToRadius(b.mass));
+        cd.setColor(SpaceDraw.massToColor(b.getMass()));
+        drawAsFilledCircle(cd, b.getMassCenter(), SpaceDraw.massToRadius(b.getMass()));
 
     }
 
@@ -170,10 +168,10 @@ public class Simulation {
 
         // "force" F between two masses m₁ and m₂:
         // F = Gm₁m₂/d² = m₁a₁ -> a₁ = Gm₂/d²
-        Vector3 direction = minus(b2.massCenter, b1.massCenter);
+        Vector3 direction = minus(b2.getMassCenter(), b1.getMassCenter());
         double distance = length(direction);
         normalize(direction);
-        double length = G * b2.mass / (distance * distance);
+        double length = G * b2.getMass() / (distance * distance);
         return times(direction, length);
     }
 
@@ -188,19 +186,18 @@ public class Simulation {
      */
     public static Body merge(Body b1, Body b2) {
 
-        Body result = new Body();
-        result.mass = b1.mass + b2.mass;
-        result.massCenter = times(plus(times(b1.massCenter, b1.mass), times(b2.massCenter,
-                        b2.mass)),
-                1 / result.mass);
+        double mass = b1.getMass() + b2.getMass();
+        Vector3 massCenter = times(plus(times(b1.getMassCenter(), b1.getMass()), times(b2.getMassCenter(),
+                        b2.getMass())),
+                1 / mass);
 
         // Momentum of a body corresponds to its velocity (currentMovement) times its mass.
         // Momentum v₃m₃ of result b₃ is the sum of the momentums of b₁ and b₂:
         // v₃m₃ = v₁m₁ + v₂m₂ -> v₃ = (v₁m₁ + v₂m₂)/m₃
-        result.currentMovement =
-                times(plus(times(b1.currentMovement, b1.mass), times(b2.currentMovement, b2.mass)),
-                        1.0 / result.mass);
-        return result;
+        Vector3 currentMovement =
+                times(plus(times(b1.getCurrentMovement(), b1.getMass()), times(b2.getCurrentMovement(), b2.getMass())),
+                        1.0 / mass);
+        return new Body(mass, massCenter, currentMovement);
     }
 
     /**
@@ -211,8 +208,8 @@ public class Simulation {
     public static void accelerate(Body b, Vector3 acceleration) {
 
         // accelerate for one second and update movement
-        b.currentMovement = plus(b.currentMovement, acceleration);
-        b.massCenter = plus(b.massCenter, b.currentMovement);
+        b.setCurrentMovement(plus(b.getCurrentMovement(), acceleration));
+        b.setMassCenter(plus(b.getMassCenter(), b.getCurrentMovement()));
     }
 
     /**

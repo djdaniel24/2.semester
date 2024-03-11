@@ -7,12 +7,35 @@ import codedraw.CodeDraw;
  */
 public class Body {
 
-    //TODO: change modifiers.
-    public double mass;
-    public Vector3 massCenter; // position of the center of mass.
-    public Vector3 currentMovement;
+    private double mass;
+    private Vector3 massCenter; // position of the center of mass.
+    private Vector3 currentMovement;
 
-    //TODO: define constructor.
+    public Body(double mass, Vector3 massCenter, Vector3 currentMovement) {
+        this.mass = mass;
+        this.massCenter = massCenter;
+        this.currentMovement = currentMovement;
+    }
+
+    public double getMass() {
+        return mass;
+    }
+
+    public Vector3 getMassCenter() {
+        return massCenter;
+    }
+
+    public void setMassCenter(Vector3 massCenter) {
+        this.massCenter = massCenter;
+    }
+
+    public Vector3 getCurrentMovement() {
+        return currentMovement;
+    }
+
+    public void setCurrentMovement(Vector3 currentMovement) {
+        this.currentMovement = currentMovement;
+    }
 
     /**
      * Returns the distance between the centers of mass of this body and the specified body 'b'.
