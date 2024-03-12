@@ -12,9 +12,6 @@ import java.util.Random;
  */
 public class Simulation {
 
-    // gravitational constant
-    public static final double G = 6.6743e-11;
-
     // one astronomical unit (AU) is the average distance between earth and sun.
     public static final double AU = 150e9; // meters
 
@@ -91,7 +88,7 @@ public class Simulation {
                 accelerationOfBody[i] = new Vector3(); // begin with zero
                 for (int j = 0; j < bodies.length; j++) {
                     if (i != j) {
-                        Vector3 toAdd = acceleration(bodies[i], bodies[j]);
+                        Vector3 toAdd = bodies[i].acceleration(bodies[j]);
                         accelerationOfBody[i] = plus(accelerationOfBody[i], toAdd);
                     }
                 }
@@ -110,7 +107,7 @@ public class Simulation {
 
                 // draw new positions
                 for (Body body : bodies) {
-                    draw(cd, body);
+                    body.draw(cd);
                 }
 
                 // show new positions
@@ -122,58 +119,6 @@ public class Simulation {
     }
 
     //TODO: remove static methods below.
-
-    /**
-     * Draws a body in the 'cd' canvas showing a projection onto the (x,y)-plane. The body's mass
-     * center coordinates and its radius are transformed into canvas coordinates. The color of
-     * the body corresponds to the temperature of the body, assuming the relation of mass and
-     * temperature of a main sequence star.
-     * The canvas is assumed to show a quadratic SECTION_SIZE x SECTION_SIZE
-     * section of space centered arround (x, y) = (0, 0).
-     * @param cd the CodeDraw object used for drawing.
-     * @param b a body, b != null.
-     */
-    public static void draw(CodeDraw cd, Body b) {
-
-        cd.setColor(SpaceDraw.massToColor(b.getMass()));
-        drawAsFilledCircle(cd, b.getMassCenter(), SpaceDraw.massToRadius(b.getMass()));
-
-    }
-
-    /**
-     * Draws a filled circle in the 'cd' canvas using the (x,y)-coordinates of 'center'
-     * Coordinates and 'radius' are transformed into canvas coordinates. The canvas is assumed
-     * to show a quadratic SECTION_SIZE x SECTION_SIZE projection of space centered arround (x, y) =
-     * (0, 0).
-     * @param cd the CodeDraw object used for drawing.
-     * @param center the center of the circle, center != null.
-     * @param radius the radius of the circle, radius > 0.
-     */
-    public static void drawAsFilledCircle(CodeDraw cd, Vector3 center, double radius) {
-
-        double x = cd.getWidth() * (center.x + Simulation.SECTION_SIZE / 2) / Simulation.SECTION_SIZE;
-        double y = cd.getWidth() * (center.y + Simulation.SECTION_SIZE / 2) / Simulation.SECTION_SIZE;
-        radius = cd.getWidth() * radius / Simulation.SECTION_SIZE;
-        cd.fillCircle(x, y, Math.max(radius, 1.5));
-    }
-
-    /**
-     * Returns the acceleration vector of 'b1' that results from the gravitational interaction with
-     * body 'b2'. This returned vector is computed according to Newton's laws of gravitation.
-     * @param b1 a body, b1 != null.
-     * @param b2 another body, b2 != null.
-     * @return an acceleration vector.
-     */
-    public static Vector3 acceleration(Body b1, Body b2) {
-
-        // "force" F between two masses m₁ and m₂:
-        // F = Gm₁m₂/d² = m₁a₁ -> a₁ = Gm₂/d²
-        Vector3 direction = minus(b2.getMassCenter(), b1.getMassCenter());
-        double distance = length(direction);
-        normalize(direction);
-        double length = G * b2.getMass() / (distance * distance);
-        return times(direction, length);
-    }
 
     /**
      * Returns a new body that is formed by the collision of 'b1' and 'b2'. The mass of the

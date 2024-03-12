@@ -85,7 +85,10 @@ public class Vector3 {
      */
     public void drawAsFilledCircle(CodeDraw cd, double radius) {
 
-        //TODO: implement method.
+        double x = cd.getWidth() * (this.x + Simulation.SECTION_SIZE / 2) / Simulation.SECTION_SIZE;
+        double y = cd.getWidth() * (this.y + Simulation.SECTION_SIZE / 2) / Simulation.SECTION_SIZE;
+        radius = cd.getWidth() * radius / Simulation.SECTION_SIZE;
+        cd.fillCircle(x, y, Math.max(radius, 1.5));
     }
 
     /**
