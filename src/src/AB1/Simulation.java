@@ -5,7 +5,13 @@ import codedraw.*;
 import java.awt.*;
 import java.util.Random;
 
-// TODO: insert answers to questions (Zusatzfragen) in 'Aufgabenblatt1.md' as comment.
+/**
+ * 1. Unter Datenkapselung versteht man die Elemente eines Objektes nicht für alle offen zur verfügung zu stellen,
+ * sondern über andere Interfaces. Wie Getter/Setter
+ * 2. Unter Data Hiding wird das Lokalisieren von Daten eines Objektes verstanden. Aka die Objektvariablen als
+ * Privat definieren
+ * 3. Auf der Linken seite von solch einem Punkt steht ein Objekt oder eine Instanz.
+ */
 
 /**
  * Simulates the formation of a massive solar system.
@@ -32,8 +38,6 @@ public class Simulation {
      */
     public static void main(String[] args) {
 
-        //TODO: change implementation of this method according to 'Aufgabenblatt1.md'.
-
         // simulation
         CodeDraw cd = new CodeDraw();
         Body[] bodies = new Body[NUMBER_OF_BODIES];
@@ -43,15 +47,9 @@ public class Simulation {
 
         for (int i = 0; i < bodies.length; i++) {
             double mass = Math.abs(random.nextGaussian()) * OVERALL_SYSTEM_MASS / bodies.length; // kg
-            bodies[i] = new Body(mass, new Vector3(), new Vector3());
-            bodies[i].getMassCenter().x = 0.2 * random.nextGaussian() * AU;
-            bodies[i].getMassCenter().y = 0.2 * random.nextGaussian() * AU;
-            bodies[i].getMassCenter().z = 0.2 * random.nextGaussian() * AU;
-
-            bodies[i].getCurrentMovement().x = random.nextGaussian() * 5e3;
-            bodies[i].getCurrentMovement().y = random.nextGaussian() * 5e3;
-            bodies[i].getCurrentMovement().z = random.nextGaussian() * 5e3;
-
+            Vector3 massCenter = new Vector3(0.2 * random.nextGaussian() * AU, 0.2 * random.nextGaussian() * AU, 0.2 * random.nextGaussian() * AU);
+            Vector3 currentMovement = new Vector3(random.nextGaussian() * 5e3, random.nextGaussian() * 5e3, random.nextGaussian() * 5e3);
+            bodies[i] = new Body(mass, massCenter, currentMovement);
         }
 
         double seconds = 0;
@@ -63,10 +61,10 @@ public class Simulation {
             // merge bodies that have collided
             for (int i = 0; i < bodies.length; i++) {
                 for (int j = i + 1; j < bodies.length; j++) {
-                    if (distance(bodies[j].getMassCenter(), bodies[i].getMassCenter()) <
+                    if (bodies[j].getMassCenter().distanceTo(bodies[i].getMassCenter()) <
                             SpaceDraw.massToRadius(bodies[j].getMass()) + SpaceDraw.massToRadius(bodies[i].getMass())) {
                         // collision of bodies i and j
-                        bodies[i] = merge(bodies[i], bodies[j]);
+                        bodies[i] = bodies[i].merge(bodies[j]);
 
                         // generate a duplicate of the array with body j removed.
                         Body[] bodiesOneRemoved = new Body[bodies.length - 1];
@@ -85,11 +83,11 @@ public class Simulation {
 
             // for each body (with index i): compute its total acceleration.
             for (int i = 0; i < bodies.length; i++) {
-                accelerationOfBody[i] = new Vector3(); // begin with zero
+                accelerationOfBody[i] = new Vector3(0, 0, 0); // begin with zero
                 for (int j = 0; j < bodies.length; j++) {
                     if (i != j) {
                         Vector3 toAdd = bodies[i].acceleration(bodies[j]);
-                        accelerationOfBody[i] = plus(accelerationOfBody[i], toAdd);
+                        accelerationOfBody[i] = accelerationOfBody[i].plus(toAdd);
                     }
                 }
             }
@@ -97,7 +95,7 @@ public class Simulation {
 
             // for each body (with index i): accelerate it for one second.
             for (int i = 0; i < bodies.length; i++) {
-                accelerate(bodies[i], accelerationOfBody[i]);
+                bodies[i].accelerate(accelerationOfBody[i]);
             }
 
             // show all movements in the canvas only every hour (to speed up the simulation)
@@ -116,130 +114,5 @@ public class Simulation {
 
         }
 
-    }
-
-    //TODO: remove static methods below.
-
-    /**
-     * Returns a new body that is formed by the collision of 'b1' and 'b2'. The mass of the
-     * returned body is the sum of the masses of 'b1' and 'b2'. The current movement of the
-     * returned body is given by the law of conservation of momentum. (The momentum of the
-     * returned body is the sum of the momentums of 'b1' and 'b2').
-     * @param b1 a body, b1 != null.
-     * @param b2 another body, b2 != null.
-     * @return the body formed by the collision.
-     */
-    public static Body merge(Body b1, Body b2) {
-
-        double mass = b1.getMass() + b2.getMass();
-        Vector3 massCenter = times(plus(times(b1.getMassCenter(), b1.getMass()), times(b2.getMassCenter(),
-                        b2.getMass())),
-                1 / mass);
-
-        // Momentum of a body corresponds to its velocity (currentMovement) times its mass.
-        // Momentum v₃m₃ of result b₃ is the sum of the momentums of b₁ and b₂:
-        // v₃m₃ = v₁m₁ + v₂m₂ -> v₃ = (v₁m₁ + v₂m₂)/m₃
-        Vector3 currentMovement =
-                times(plus(times(b1.getCurrentMovement(), b1.getMass()), times(b2.getCurrentMovement(), b2.getMass())),
-                        1.0 / mass);
-        return new Body(mass, massCenter, currentMovement);
-    }
-
-    /**
-     * Accelerate the body 'b' for one second according to the 'acceleration' vector.
-     * @param b the body to be accelerated, b != null.
-     * @param acceleration the acceleration vector, acceleration != null.
-     */
-    public static void accelerate(Body b, Vector3 acceleration) {
-
-        // accelerate for one second and update movement
-        b.setCurrentMovement(plus(b.getCurrentMovement(), acceleration));
-        b.setMassCenter(plus(b.getMassCenter(), b.getCurrentMovement()));
-    }
-
-    /**
-     * Returns the norm of v1 minus v2.
-     * @param v1 a vector, v1 != null.
-     * @param v2 a vector, v2 != null.
-     * @return the norm of v1 - v2.
-     */
-    public static double distance(Vector3 v1, Vector3 v2) {
-
-        double dX = v1.x - v2.x;
-        double dY = v1.y - v2.y;
-        double dZ = v1.z - v2.z;
-
-        return Math.sqrt(dX * dX + dY * dY + dZ * dZ);
-    }
-
-    /**
-     * Returns v1 plus v2.
-     * @param v1 a vector, v1 != null.
-     * @param v2 a vector, v2 != null.
-     * @return a new vector representing v1 + v2.
-     */
-    public static Vector3 plus(Vector3 v1, Vector3 v2) {
-
-        Vector3 result = new Vector3();
-        result.x = v1.x + v2.x;
-        result.y = v1.y + v2.y;
-        result.z = v1.z + v2.z;
-
-        return result;
-    }
-
-    /**
-     * Returns v1 minus v2.
-     * @param v1 a vector, v1 != null.
-     * @param v2 a vector, v2 != null.
-     * @return a new vector representing v1 - v2.
-     */
-    public static Vector3 minus(Vector3 v1, Vector3 v2) {
-
-        Vector3 result = new Vector3();
-        result.x = v1.x - v2.x;
-        result.y = v1.y - v2.y;
-        result.z = v1.z - v2.z;
-
-        return result;
-    }
-
-    /**
-     * Returns the product of 'v' and 'd'.
-     * @param v a vector, v != null.
-     * @param d a coefficient.
-     * @return a new vector d times v.
-     */
-    public static Vector3 times(Vector3 v, double d) {
-
-        Vector3 result = new Vector3();
-        result.x = v.x * d;
-        result.y = v.y * d;
-        result.z = v.z * d;
-
-        return result;
-    }
-
-    /**
-     * Returns the norm of 'v'.
-     * @param v a vector, v != null.
-     * @return the norm of v.
-     */
-    public static double length(Vector3 v) {
-
-        return distance(v, new Vector3()); // distance to origin.
-    }
-
-    /**
-     * Normalizes the specified vector 'v': changes the length of the vector such that its length
-     * becomes one. The direction of the vector is not affected.
-     * @param v vector to be normalized, v != null.
-     */
-    public static void normalize(Vector3 v) {
-
-        double length = length(v);
-        v.x /= length;
-        v.y /= length;
-        v.z /= length;
     }
 }

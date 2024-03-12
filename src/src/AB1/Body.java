@@ -44,8 +44,7 @@ public class Body {
      */
     public double distanceTo(Body b) {
 
-        //TODO: implement method.
-        return 0;
+        return massCenter.distanceTo(b.getMassCenter());
     }
 
     /**
@@ -76,7 +75,9 @@ public class Body {
      */
     public void accelerate(Vector3 acceleration) {
 
-        //TODO: implement method.
+        // accelerate for one second and update movement
+        currentMovement = currentMovement.plus(acceleration);
+        massCenter = massCenter.plus(currentMovement);
     }
 
     /**
@@ -87,8 +88,7 @@ public class Body {
      */
     public double getRadius() {
 
-        //TODO: implement method.
-        return 0d;
+        return Math.pow(mass, 0.5);
     }
 
     /**
@@ -102,8 +102,20 @@ public class Body {
      */
     public Body merge(Body b) {
 
-        //TODO: implement method.
-        return null;
+        double mass = getMass() + b.getMass();
+        Vector3 massCenter = getMassCenter().
+                times(getMass()).plus(b.getMassCenter().times(b.getMass())).
+                times(1 / mass);
+
+        // Momentum of a body corresponds to its velocity (currentMovement) times its mass.
+        // Momentum v₃m₃ of result b₃ is the sum of the momentums of b₁ and b₂:
+        // v₃m₃ = v₁m₁ + v₂m₂ -> v₃ = (v₁m₁ + v₂m₂)/m₃
+        Vector3 currentMovement =
+                getCurrentMovement().
+                        times(getMass()).
+                        plus(b.getCurrentMovement().times(b.getMass())).
+                        times(1.0 / mass);
+        return new Body(mass, massCenter, currentMovement);
     }
 
     /**
@@ -125,12 +137,13 @@ public class Body {
      * Returns a string with the information about this body including
      * mass, position (mass center) and current movement. Example:
      * "5.972E24 kg, position: [1.48E11, 0.0, 0.0] m, movement: [0.0, 29290.0, 0.0] m/s."
+     *
      * @return 'this' represented as a string.
      */
     public String toString() {
-
-        //TODO: implement method.
-        return "";
+        return mass + " kg" +
+                ", position: " + massCenter.toString() +
+                ", movement: " + currentMovement.toString() + " m/s.";
     }
 }
 
