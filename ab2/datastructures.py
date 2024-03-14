@@ -1,27 +1,47 @@
 from typing import Tuple
 import numpy as np
-    
+
+
+matrikelnummer = "12323792"
+
+d = {
+    'A': int(matrikelnummer[0]),
+    'B': int(matrikelnummer[1]),
+    'C': int(matrikelnummer[2]),
+    'D': int(matrikelnummer[3]),
+    'E': int(matrikelnummer[4]),
+    'F': int(matrikelnummer[5]),
+    'G': int(matrikelnummer[6]),
+    'H': int(matrikelnummer[7]),
+}
+
+
 def define_structures() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-        Defines the two vectors v1 and v2 as well as the matrix M determined by your matriculation number.
+        Defines the two vectors v1 and v2 as well as the matrix M determined by
+        your matriculation number.
     """
     ### STUDENT CODE
-    # TODO: Implement this function.
 
-	# NOTE: The following lines can be removed. They prevent the framework
-    #       from crashing.
+    v1 = np.array([d['D'], d['A'], d['C']], dtype=np.int_)
+    v2 = np.array([d['F'], d['B'], d['E']], dtype=np.int_)
 
-    v1 = np.zeros(3)
-    v2 = v1.copy()
-    M = np.zeros((3,3))
+    M = np.array([
+            [d['D'], d['B'], d['C']], 
+            [d['B'], d['G'], d['A']], 
+            [d['E'], d['H'], d['F']]
+        ])
     
     ### END STUDENT CODE
 
     return v1, v2, M
 
+print(define_structures())
+
 def sequence(M : np.ndarray) -> np.ndarray:
     """
-        Defines a vector given by the minimum and maximum digit of your matriculation number. Step size = 0.25.
+        Defines a vector given by the minimum and maximum digit of your 
+        matriculation number. Step size = 0.25.
     """
     ### STUDENT CODE
     # TODO: Implement this function.
