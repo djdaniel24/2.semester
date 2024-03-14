@@ -30,13 +30,11 @@ def define_structures() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
             [d['D'], d['B'], d['C']], 
             [d['B'], d['G'], d['A']], 
             [d['E'], d['H'], d['F']]
-        ])
+        ], dtype=np.int_)
     
     ### END STUDENT CODE
 
     return v1, v2, M
-
-print(define_structures())
 
 def sequence(M : np.ndarray) -> np.ndarray:
     """
@@ -44,15 +42,14 @@ def sequence(M : np.ndarray) -> np.ndarray:
         matriculation number. Step size = 0.25.
     """
     ### STUDENT CODE
-    # TODO: Implement this function.
 
-	# NOTE: The following lines can be removed. They prevent the framework
-    #       from crashing.
+    min = M.min()
+    max = M.max()
+    increment = 0.25
 
-    result = np.zeros(10)
+    result = np.arange(min, max + increment, increment)
 
     ### END STUDENT CODE
-
 
     return result
 
@@ -61,17 +58,22 @@ def matrix(M : np.ndarray) -> np.ndarray:
         Defines the 15x9 block matrix as described in the task description.
     """
     ### STUDENT CODE
-    # TODO: Implement this function.
+    
+    white = np.zeros((3, 3))
 
-	# NOTE: The following lines can be removed. They prevent the framework
-    #       from crashing.
+    odd = np.hstack((M, white, M))
+    even = np.hstack((white, M, white))
 
-    r = np.zeros((15,9))
+    r = np.vstack((odd, even, odd, even, odd))
 
     ### END STUDENT CODE
 
     return r
 
+struct = define_structures()
+seq = sequence(struct[2])
+mtx = matrix(struct[2])
+print(mtx)
 
 def dot_product(v1:np.ndarray, v2:np.ndarray) -> float:
     """
