@@ -1,6 +1,9 @@
 # Um die Angeben nicht hochzuladen
 *.pdf
 
+# Für JetBrains Projekte
+.idea
+
 # GIMP Projects
 *.xcf
 *.xcf.*
