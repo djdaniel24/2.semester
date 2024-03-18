@@ -9,12 +9,17 @@ def define_transformations() -> List[np.ndarray]:
         The transformations are determined by using mscale, mrotate and mtranslate.
     """
     ### STUDENT CODE
-    # TODO: Implement this function.
+    
+    t1 = mrotate(55) @ mtranslate(-3, 0)
 
-	# NOTE: The following lines can be removed. They prevent the framework
-    #       from crashing.
+    new_x = 0 - 3 * np.cos(np.radians(55))
+    new_y = 0 - 3 * np.sin(np.radians(55))
+    t2 = mrotate(55) @ mtranslate(new_x, new_y)
 
-    t1, t2, t3, t4 = np.zeros((3,3)), np.zeros((3,3)), np.zeros((3,3)), np.zeros((3,3)),
+
+    t3 = mscale(3, 2) @ mrotate(70) @ mtranslate(3, 1)
+
+    t4 = mrotate(45) @ mscale(1, 3)
 
     ### END STUDENT CODE
 
@@ -25,12 +30,10 @@ def mscale(sx : float, sy : float) -> np.ndarray:
         Defines a scale matrix. The scales are determined by sx in x and sy in y dimension.
     """
     ### STUDENT CODE
-    # TODO: Implement this function.
 
-	# NOTE: The following lines can be removed. They prevent the framework
-    #       from crashing.
-
-    m = np.zeros((3,3))
+    m = np.array([[sx, 0, 0], 
+                  [0, sy, 0], 
+                  [0, 0, 1]])
 
     ### END STUDENT CODE
 
@@ -41,12 +44,11 @@ def mrotate(angle : float) -> np.ndarray:
         Defines a rotation matrix (z-axis) determined by the angle in degree (!).
     """
     ### STUDENT CODE
-    # TODO: Implement this function.
-
-	# NOTE: The following lines can be removed. They prevent the framework
-    #       from crashing.
-
-    m = np.zeros((3,3))
+    r_a = np.radians(angle)
+    
+    m = np.array([[np.cos(r_a), np.sin(r_a), 0], 
+                  [-np.sin(r_a), np.cos(r_a), 0], 
+                  [0, 0, 1]])
 
     ### END STUDENT CODE
 
@@ -57,12 +59,10 @@ def mtranslate(tx : float, ty : float) -> np.ndarray:
         Defines a translation matrix. tx in x, ty in y direction.
     """
     ### STUDENT CODE
-    # TODO: Implement this function.
-
-	# NOTE: The following lines can be removed. They prevent the framework
-    #       from crashing.
-
-    m = np.zeros((3,3))
+    
+    m = np.array([[1, 0, 0],
+                  [0, 1, 0],
+                  [tx, ty, 1]])
 
     ### END STUDENT CODE
 
@@ -73,13 +73,13 @@ def transform_vertices(v : np.ndarray, m : np.ndarray) -> np.ndarray:
         transform the (3xN) vertices given by v with the (3x3) transformation matrix determined by m.
     """
     ### STUDENT CODE
-    # TODO: Implement this function.
+    #print("v:\n", v.T)
+    #print("m:\n", m)
 
-	# NOTE: The following lines can be removed. They prevent the framework
-    #       from crashing.
-
-    out = np.zeros((m.shape[0],v.shape[1]))
-
+    out = np.array(v.T @ m).T
+    
+    #print("out:\n", out.T)
+    
     ### END STUDENT CODE
 
     return out
