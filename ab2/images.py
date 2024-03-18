@@ -2,6 +2,8 @@ import numpy as np
 import scipy.ndimage
 from PIL import Image
 
+import images
+
 import utils
 
 def read_img(inp:str) -> Image.Image:
@@ -85,7 +87,7 @@ def cut_and_reshape(img_gray:np.ndarray) -> np.ndarray:
     left_half = img_gray[:, :midpoint]
     right_half = img_gray[:, midpoint:]
     
-    out = np.vstack((left_half, right_half))
+    out = np.vstack((right_half, left_half))
 
     ### END STUDENT CODE
 
@@ -95,32 +97,43 @@ def filter_image(img:np.ndarray) -> np.ndarray:
     """
         filters the image with the gaussian kernel given below. 
     """
-    gaussian = utils.gauss_filter(5, 2)
 
     ### STUDENT CODE
-    # TODO: Implement this function.
+    gaussian = utils.gauss_filter(5, 2)
+    g_height, g_width = gaussian.shape
 
-	# NOTE: The following lines can be removed. They prevent the framework
-    #       from crashing.
+    pad_height = g_height // 2
+    pad_width = g_width // 2
+    
 
     out = np.zeros(img.shape)
 
+    # Pad the input image
+    padded_img = np.pad(img, ((pad_height, pad_height), (pad_width, pad_width), (0, 0)), mode='constant')
+
+    # channels of the image
+    for i in range(img.shape[2]):
+        # height of the image
+        for y in range(img.shape[0]):
+            # width of the image
+            for x in range(img.shape[1]):
+                out[y, x, i] = np.sum(padded_img[y:y+g_height, x:x+g_width, i] * gaussian)
+    
     ### END STUDENT CODE
 
     return out
+
+
 
 def horizontal_edges(img:np.ndarray) -> np.ndarray:
     """
         Defines a sobel kernel to extract horizontal edges and convolves the image with it.
     """
     ### STUDENT CODE
-    # TODO: Implement this function.
+    g = np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
 
-	# NOTE: The following lines can be removed. They prevent the framework
-    #       from crashing.
-
-    out = np.zeros(img.shape)
-
+    out = scipy.ndimage.correlate(img, g, mode="constant")
+    
     ### END STUDENT CODE
 
     return out
