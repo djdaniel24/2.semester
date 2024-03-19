@@ -8,11 +8,17 @@ import codedraw.CodeDraw;
 public class Vector3 {
 
     //TODO: change modifiers.
-    public double x;
-    public double y;
-    public double z;
+    private double x;
+    private double y;
+    private double z;
 
-    //TODO: define constructor.
+    public Vector3(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+
 
     /**
      * Returns the sum of this vector and vector 'v'.
@@ -21,8 +27,7 @@ public class Vector3 {
      */
     public Vector3 plus(Vector3 v) {
 
-        //TODO: implement method.
-        return null;
+        return new Vector3(x + v.x, y + v.y, z + v.z);
     }
 
     /**
@@ -32,8 +37,7 @@ public class Vector3 {
      */
     public Vector3 times(double d) {
 
-        //TODO: implement method.
-        return null;
+        return new Vector3(x * d, y * d, z * d);
     }
 
     /**
@@ -43,8 +47,7 @@ public class Vector3 {
      */
     public Vector3 minus(Vector3 v) {
 
-        //TODO: implement method.
-        return null;
+        return new Vector3(x - v.x, y - v.y, z - v.z);
     }
 
     /**
@@ -54,8 +57,11 @@ public class Vector3 {
      */
     public double distanceTo(Vector3 v) {
 
-        //TODO: implement method.
-        return -1d;
+        double dX = x - v.x;
+        double dY = y - v.y;
+        double dZ = z - v.z;
+
+        return Math.sqrt(dX * dX + dY * dY + dZ * dZ);
     }
 
     /**
@@ -64,8 +70,7 @@ public class Vector3 {
      */
     public double length() {
 
-        //TODO: implement method.
-        return 0;
+        return distanceTo(new Vector3(0, 0, 0)); // distance to origin.
     }
 
     /**
@@ -74,7 +79,10 @@ public class Vector3 {
      */
     public void normalize() {
 
-        //TODO: implement method.
+        double length = length();
+        x /= length;
+        y /= length;
+        z /= length;
     }
 
     /**
@@ -85,7 +93,10 @@ public class Vector3 {
      */
     public void drawAsFilledCircle(CodeDraw cd, double radius) {
 
-        //TODO: implement method.
+        double x = cd.getWidth() * (this.x + Simulation.SECTION_SIZE / 2) / Simulation.SECTION_SIZE;
+        double y = cd.getWidth() * (this.y + Simulation.SECTION_SIZE / 2) / Simulation.SECTION_SIZE;
+        radius = cd.getWidth() * radius / Simulation.SECTION_SIZE;
+        cd.fillCircle(x, y, Math.max(radius, 1.5));
     }
 
     /**
@@ -94,9 +105,7 @@ public class Vector3 {
      * @return 'this' represented as a string.
      */
     public String toString() {
-
-        //TODO: implement method.
-        return "";
+        return "[" + x + ", " + y + ", " + z + "]";
     }
 }
 
