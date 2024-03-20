@@ -15,8 +15,6 @@ public class Test {
 
         //test classes BodyQueue and BodyAccelerationMap
 
-        /* TODO: remove this line
-
         // create three bodies
         Body sun = new Body(1.989e30,new Vector3(0,0,0),new Vector3(0,0,0));
         Body earth = new Body(5.972e24,new Vector3(-1.394555e11,5.103346e10,0),
@@ -30,17 +28,17 @@ public class Test {
         BodyQueue bq = new BodyQueue(2);
         bq.add(mercury);
         bq.add(sun);
-        bq.add(earth);
+        bq.add(earth); // m, s, e
         testValue(bq.size(), 3);
 
-        testIdentity(bq.poll(), mercury);
-        testIdentity(bq.poll(), sun);
-        testIdentity(bq.poll(), earth);
+        testIdentity(bq.poll(), mercury); // s, e
+        testIdentity(bq.poll(), sun); // e
+        testIdentity(bq.poll(), earth); //
 
         testValue(bq.size(), 0);
 
         bq.add(mercury);
-        bq.add(sun);
+        bq.add(sun); // m, s
         testValue(bq.size(), 2);
 
         // check constructor of 'BodyQueue'
@@ -63,8 +61,6 @@ public class Test {
         bam.put(earth, new Vector3(0,0,0));
         testValue(bam.get(earth).distanceTo(new Vector3(0,0,0)), 0);
         testIdentity(bam.get(mercury),null);
-
-        // TODO: remove this line */
 
     }
 

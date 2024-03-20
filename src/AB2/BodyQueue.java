@@ -8,7 +8,10 @@ package AB2;
  */
 public class BodyQueue {
 
-    //TODO: declare variables.
+    private Body[] queue;
+    private int capacity;
+    private int pointer;
+
 
     /**
      * Initializes this queue with an initial capacity.
@@ -17,7 +20,10 @@ public class BodyQueue {
      */
     public BodyQueue(int initialCapacity) {
 
-        //TODO: define constructor.
+        queue = new Body[initialCapacity];
+        capacity = initialCapacity;
+        pointer = 0;
+
     }
 
     /**
@@ -27,8 +33,15 @@ public class BodyQueue {
      * @param q the queue from which elements are copied to the new queue, q != null.
      */
     public BodyQueue(BodyQueue q) {
+        int s = q.size();
+        Body[] nq = new Body[s];
 
-        //TODO: define constructor.
+        for (int i = 0; i < s; i++) {
+            nq[i] = q.queue[i];
+        }
+        queue = nq;
+        capacity = s;
+        pointer = s;
     }
 
     /**
@@ -37,7 +50,17 @@ public class BodyQueue {
      */
     public void add(Body b) {
 
-        //TODO: implement method.
+        if (pointer == capacity) {
+            Body[] newqueue = new Body[capacity *2];
+
+            for (int i = 0; i < pointer; i++) {
+                newqueue[i] = queue[i];
+            }
+            capacity = capacity * 2;
+            queue = newqueue;
+        }
+
+        queue[pointer++] = b;
     }
 
     /**
@@ -47,8 +70,22 @@ public class BodyQueue {
      */
     public Body poll() {
 
-        //TODO: implement method.
-        return null;
+        if (pointer == 0) {
+            return null;
+        }
+
+        Body head = queue[0];
+
+        Body[] nq = new Body[capacity];
+
+        for (int i = 1; i < pointer; i++) {
+            nq[i-1] = queue[i];
+        }
+
+        queue = nq;
+        pointer--;
+
+        return head;
     }
 
     /**
@@ -56,8 +93,6 @@ public class BodyQueue {
      * @return the number of bodies in this queue.
      */
     public int size() {
-
-        //TODO: implement method.
-        return -1;
+        return pointer;
     }
 }
