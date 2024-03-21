@@ -1,5 +1,7 @@
 package AB2;
 
+import java.util.Arrays;
+
 /**
  * A queue of bodies. A collection designed for holding bodies prior to processing.
  * The bodies of the queue can be accessed in a FIFO (first-in-first-out) manner,
@@ -51,13 +53,13 @@ public class BodyQueue {
     public void add(Body b) {
 
         if (pointer == capacity) {
-            Body[] newqueue = new Body[capacity *2];
+            Body[] newQueue = new Body[capacity *2];
 
             for (int i = 0; i < pointer; i++) {
-                newqueue[i] = queue[i];
+                newQueue[i] = queue[i];
             }
             capacity = capacity * 2;
-            queue = newqueue;
+            queue = newQueue;
         }
 
         queue[pointer++] = b;
@@ -69,13 +71,11 @@ public class BodyQueue {
      * @return the head of this queue (or 'null' if this queue is empty).
      */
     public Body poll() {
-
         if (pointer == 0) {
             return null;
         }
 
         Body head = queue[0];
-
         Body[] nq = new Body[capacity];
 
         for (int i = 1; i < pointer; i++) {
@@ -84,7 +84,6 @@ public class BodyQueue {
 
         queue = nq;
         pointer--;
-
         return head;
     }
 
@@ -94,5 +93,44 @@ public class BodyQueue {
      */
     public int size() {
         return pointer;
+    }
+
+    public boolean contains(Body find) {
+        for (Body b: queue) {
+            if (find.equals(b))
+                return true;
+        }
+        return false;
+    }
+
+    public void remove(Body... bodiesToRemove){
+
+        Body[] newQueue = new Body[capacity];
+        int len = 0;
+        for (int i = 0; i < pointer; i++) {
+
+            boolean shouldRemove = false;
+            for (Body b : bodiesToRemove) {
+                if (queue[i].equals(b)) {
+                    shouldRemove = true;
+                    break;
+                }
+            }
+            if (!shouldRemove) {
+                newQueue[len] = queue[i];
+                len++;
+            }
+        }
+        queue = newQueue;
+        pointer = len;
+    }
+
+    @Override
+    public String toString() {
+        return "BodyQueue{" +
+                "queue=" + Arrays.toString(queue) +
+                ", capacity=" + capacity +
+                ", pointer=" + pointer +
+                '}';
     }
 }

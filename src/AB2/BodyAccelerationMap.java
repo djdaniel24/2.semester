@@ -100,7 +100,7 @@ public class BodyAccelerationMap {
 
         while (left <= right) {
             int middle = left + ((right - left) / 2);
-            if (keys[middle].getMass() < key.getMass()) {// || key.equals(keys[middle])
+            if (keys[middle].getMass() < key.getMass()) { // || key.equals(keys[middle])
                 right = middle - 1;
             } else {
                 left = middle + 1;

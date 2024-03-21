@@ -68,14 +68,13 @@ public class Body {
      * @return the acceleration vector.
      */
     public Vector3 acceleration(Body b) {
-        double G = 6.6743e-11;
 
         // "force" F between two masses m₁ and m₂:
         // F = Gm₁m₂/d² = m₁a₁ -> a₁ = Gm₂/d²
         Vector3 direction = b.getMassCenter().minus(this.massCenter);
         double distance = direction.length();
         direction.normalize();
-        double length = G * b.getMass() / (distance * distance);
+        double length = Simulation.G * b.getMass() / (distance * distance);
         return direction.times(length);
     }
 
